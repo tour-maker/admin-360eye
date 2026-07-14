@@ -1,0 +1,102 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+*{
+  font-family: 'Montserrat';
+}
+
+.shadows{
+  box-shadow: 0 1px 6px 2px rgba(255, 255, 255, 0.147);
+}
+
+.buttonShadow{
+  box-shadow: 0px 0px 10px 5px rgba(128, 187, 15, 0.35);
+}
+/* body::-webkit-scrollbar {
+  display: none;
+}
+
+body{
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+} */
+
+.divShadow {
+  box-shadow: 0px 0px 10px 5px rgba(128, 187, 15, 0.35);
+}
+
+/* Custom horizontal scrollbar */
+.custom-scrollbar {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  white-space: nowrap;
+  scrollbar-width: thin !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE/Edge */
+}
+
+/* WebKit-based Browsers (Chrome, Safari) */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px; /* Adjust height for x-scrollbar */
+  background-color: #555;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: #555;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #80bb0f;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track:hover {
+  background-color: #80bb0f;
+}
+
+/* Firefox */
+
+
+.moveUp{
+  transition: transform 0.3s ease;
+  transform:  translateY(-35px);
+  font-size: smaller;
+  color:#80bb0f;
+}
+.borderz{
+  border-bottom:1px solid #80bb0f ;
+}
+.border2{
+  border-bottom:1px solid #80bb0f ;
+}
+
+.image {
+  background-image: url("../src/assets/360eye_logo 4.png");
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  background-size: 0%; /* Default size */
+}
+
+/* Large screens (min-width: 1024px) */
+@media (min-width: 1024px) {
+  .image {
+    background-size: 26%; /* Default size for larger screens */
+  }
+}
+
+/* Target MacBook Pro and similar (min-width: 1440px) */
+@media (min-width: 1440px) {
+  .image {
+    background-size: 20%; /* Adjust size specifically for MacBook */
+  }
+}
+
+.white-space-nowrap {
+  white-space: nowrap;
+}
