@@ -91,9 +91,12 @@ const Sidebar = () => {
       ]
     },
     {
-      title: "Enquiry",
-      icon: <FiMail className="mr-3 text-lg" />,
-      path: "/enquiry"
+      title: "Blog",
+      icon: <FiHelpCircle className="mr-3 text-lg" />,
+      subItems: [
+        { title: "Add Blog", path: "/blog/add" },
+        { title: "Manage Blog", path: "/blog" },
+      ]
     },
     {
       title: "URL Redirection",

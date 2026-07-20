@@ -25,6 +25,8 @@ import CommerceTable from "./src/components/commercial/CommerceTable";
 import Product360Table from "./src/components/products/Product360Table";
 import AriaPage from "./src/pages/AreaPage";
 import UploadZIP from "./src/pages/album/UploadZIP";
+import BlogTable from "./src/pages/Blog/BlogTable";
+import AddBlog from "./src/pages/Blog/AddBlog";
 
 export const router = createHashRouter([
   {
@@ -134,6 +136,18 @@ export const router = createHashRouter([
       {
         path: "/property/propertyStatus",
         element: <PropertyStatusPage />
+      },
+      {
+        path: "blog",
+        element: <BlogTable />
+      },
+      {
+        path: "blog/add",
+        element: <AddBlog />
+      },
+      {
+        path: "blog/edit/:id",
+        element: <AddBlog isEditing />
       }
     ]
   },
