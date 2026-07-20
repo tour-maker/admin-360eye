@@ -27,6 +27,8 @@ import AriaPage from "./src/pages/AreaPage";
 import UploadZIP from "./src/pages/album/UploadZIP";
 import BlogTable from "./src/pages/Blog/BlogTable";
 import AddBlog from "./src/pages/Blog/AddBlog";
+import ClientAccessTable from "./src/pages/ClientAccess/ClientAccessTable";
+import AddClientAccess from "./src/pages/ClientAccess/AddClientAccess";
 
 export const router = createHashRouter([
   {
@@ -148,6 +150,18 @@ export const router = createHashRouter([
       {
         path: "blog/edit/:id",
         element: <AddBlog isEditing />
+      },
+      {
+        path: "client-access",
+        element: <ClientAccessTable />
+      },
+      {
+        path: "client-access/add",
+        element: <AddClientAccess />
+      },
+      {
+        path: "client-access/edit/:id",
+        element: <AddClientAccess isEditing />
       }
     ]
   },

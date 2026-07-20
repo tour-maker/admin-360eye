@@ -32,6 +32,9 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
     area: "",
     thumbImage: null,
     googleAnalyticsId: "",
+    bhkType: "",
+    hasVoiceOver: false,
+    viewMode: "Day",
   });
 
   const [categories, setCategories] = useState([]);
@@ -79,6 +82,9 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
             area: productData.area || "",
             thumbImage: productData.thumbImage || null,
             googleAnalyticsId: productData.googleAnalyticsId || "",
+            bhkType: productData.bhkType || "",
+            hasVoiceOver: productData.hasVoiceOver || false,
+            viewMode: productData.viewMode || "Day",
           });
         } else {
           setFormData({
@@ -95,6 +101,9 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
             area: "",
             thumbImage: null,
             googleAnalyticsId: "",
+            bhkType: "",
+            hasVoiceOver: false,
+            viewMode: "Day",
           });
         }
       } catch (error) {
@@ -105,11 +114,10 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
   }, [token, isEditing, productData]);
 
   const handleOnChange = (e) => {
-    const { name, value } = e.target;
-    console.log("name", value);
+    const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -261,6 +269,56 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
               placeholder="Enter Project name"
               required
             />
+          </div>
+
+          {/* BHK Configuration */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              BHK Configuration
+            </label>
+            <select
+              name="bhkType"
+              value={formData.bhkType}
+              onChange={handleOnChange}
+              className="mt-1 block w-full px-4 py-2 border border-accent-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="">Not specified</option>
+              <option value="2 BHK">2 BHK</option>
+              <option value="3 BHK">3 BHK</option>
+              <option value="5 BHK">5 BHK</option>
+            </select>
+          </div>
+
+          {/* Day/Night View */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              View Mode
+            </label>
+            <select
+              name="viewMode"
+              value={formData.viewMode}
+              onChange={handleOnChange}
+              className="mt-1 block w-full px-4 py-2 border border-accent-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="Day">Day</option>
+              <option value="Night">Night</option>
+              <option value="Both">Both</option>
+            </select>
+          </div>
+
+          {/* Voice Over Toggle */}
+          <div className="flex items-center gap-2 mt-6">
+            <input
+              type="checkbox"
+              id="hasVoiceOver"
+              name="hasVoiceOver"
+              checked={formData.hasVoiceOver}
+              onChange={handleOnChange}
+              className="h-4 w-4 rounded border-accent-300 text-primary-600 focus:ring-primary-500"
+            />
+            <label htmlFor="hasVoiceOver" className="text-sm font-medium text-gray-700">
+              Has Voice Over
+            </label>
           </div>
 
           {/* Tour URL */}

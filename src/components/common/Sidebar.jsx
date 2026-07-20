@@ -99,6 +99,14 @@ const Sidebar = () => {
       ]
     },
     {
+      title: "Client Access",
+      icon: <FiLock className="mr-3 text-lg" />,
+      subItems: [
+        { title: "Add Client Access", path: "/client-access/add" },
+        { title: "Manage Client Access", path: "/client-access" },
+      ]
+    },
+    {
       title: "URL Redirection",
       icon: <FiLink className="mr-3 text-lg" />,
       path: "/pageRedirect"
