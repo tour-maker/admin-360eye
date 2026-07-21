@@ -16,6 +16,7 @@ const AddClientAccess = ({ isEditing }) => {
     clientName: "",
     slug: "",
     assignedTours: [],
+    allAccess: true,
     expiresAt: "",
     isActive: true,
     notes: "",
@@ -45,6 +46,7 @@ const AddClientAccess = ({ isEditing }) => {
             clientName: client.clientName || "",
             slug: client.slug || "",
             assignedTours: (client.assignedTours || []).map((t) => (typeof t === "string" ? t : t._id)),
+            allAccess: client.allAccess !== undefined ? client.allAccess : true,
             expiresAt: client.expiresAt ? new Date(client.expiresAt).toISOString().slice(0, 10) : "",
             isActive: client.isActive !== undefined ? client.isActive : true,
             notes: client.notes || "",
@@ -174,28 +176,44 @@ const AddClientAccess = ({ isEditing }) => {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Assign Accessible Tours ({formData.assignedTours.length} selected)
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="allAccess"
+            name="allAccess"
+            checked={formData.allAccess}
+            onChange={handleChange}
+            className="h-4 w-4 rounded border-accent-300 text-primary-600 focus:ring-primary-500"
+          />
+          <label htmlFor="allAccess" className="text-sm font-medium text-gray-700">
+            Give access to all tours (including future ones added later)
           </label>
-          <div className="max-h-64 overflow-y-auto border border-accent-300 rounded-md p-3 space-y-2">
-            {allTours.length === 0 && <p className="text-sm text-gray-400">Loading tours...</p>}
-            {allTours.map((tour) => (
-              <div key={tour._id} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id={`tour-${tour._id}`}
-                  checked={formData.assignedTours.includes(tour._id)}
-                  onChange={() => handleTourToggle(tour._id)}
-                  className="h-4 w-4 rounded border-accent-300 text-primary-600 focus:ring-primary-500"
-                />
-                <label htmlFor={`tour-${tour._id}`} className="text-sm text-gray-700">
-                  {tour.tourName}
-                </label>
-              </div>
-            ))}
-          </div>
         </div>
+
+        {!formData.allAccess && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Assign Accessible Tours ({formData.assignedTours.length} selected)
+            </label>
+            <div className="max-h-64 overflow-y-auto border border-accent-300 rounded-md p-3 space-y-2">
+              {allTours.length === 0 && <p className="text-sm text-gray-400">Loading tours...</p>}
+              {allTours.map((tour) => (
+                <div key={tour._id} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id={`tour-${tour._id}`}
+                    checked={formData.assignedTours.includes(tour._id)}
+                    onChange={() => handleTourToggle(tour._id)}
+                    className="h-4 w-4 rounded border-accent-300 text-primary-600 focus:ring-primary-500"
+                  />
+                  <label htmlFor={`tour-${tour._id}`} className="text-sm text-gray-700">
+                    {tour.tourName}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <button
           type="submit"

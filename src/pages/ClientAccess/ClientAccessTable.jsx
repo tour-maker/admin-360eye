@@ -94,7 +94,9 @@ const ClientAccessTable = () => {
                       </a>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{client.assignedTours?.length || 0}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600">
+                    {client.allAccess ? "All Tours" : client.assignedTours?.length || 0}
+                  </td>
                   <td className="px-4 py-3 text-sm text-gray-600">
                     {client.expiresAt ? new Date(client.expiresAt).toLocaleDateString() : "No expiry"}
                   </td>
