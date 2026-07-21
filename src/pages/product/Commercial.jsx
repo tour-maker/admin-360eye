@@ -126,9 +126,23 @@ const AddCommercial = ({ isEditing }) => {
         <input type="hidden" name="propertyType" value={formData.propertyType} />
         <input type="hidden" name="propertyStatus" value={formData.propertyStatus} />
         <input type="hidden" name="productLocation" value={formData.productLocation} />
-        <input type="hidden" name="tourName" value={formData.tourName} />
         <input type="hidden" name="urlName" value={formData.urlName} />
         <input type="hidden" name="area" value={formData.area} />
+          {/* Title / Heading */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Title / Heading
+            </label>
+            <input
+              type="text"
+              name="tourName"
+              value={formData.tourName}
+              onChange={handleOnChange}
+              className="mt-1 block w-full px-4 py-2 border border-accent-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-black"
+              placeholder="e.g. Project Location Video"
+              required
+            />
+          </div>
           {/* Form fields */}
           {/* Main Category */}
           {/* <div> */}
