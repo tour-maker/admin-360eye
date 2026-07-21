@@ -21,3 +21,5 @@ jobs:
             git pull origin main
             npm install
             npm run build
+            aws s3 sync /home/ubuntu/admin-360eye/dist/ s3://360eye-admin-panel/ --delete
+            aws cloudfront create-invalidation --distribution-id E2UQJMPV0NDUK0 --paths "/*"
