@@ -25,7 +25,7 @@ export const createBlog = async (formData, token) => {
     } else if (value !== null && value !== undefined) {
       data.append(key, value);
     }
-    console.log("DEBUG blogService: appended", key);
+    console.log("DEBUG blogService: appended", key, value instanceof File ? `File ${value.name} ${value.size} bytes ${value.type}` : "");
   });
  
   const res = await axios.post(`${API_URL}/admin/blogs`, data, {
