@@ -8,6 +8,35 @@ import { fetchPropertyTypes } from "../../services/propertyTypeService";
 import { fetchPropertyStatuses } from "../../services/propertyStatusService";
 import { fetchAreas } from "../../services/areaService";
 
+// Compress/resize an image client-side so uploads stay under CloudFront's 1MB body limit
+const compressImage = (file, maxWidth = 1200, quality = 0.75) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) return reject(new Error("Compression failed"));
+            resolve(new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg" }));
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
 const AddCommercial = ({ isEditing }) => {
   const { token } = useSelector((state) => state.auth);
   const { id } = useParams(); // Get the product ID from the URL
@@ -37,11 +66,19 @@ const AddCommercial = ({ isEditing }) => {
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/*",
-    onDrop: (acceptedFiles) => {
-      setFormData((prevData) => ({
-        ...prevData,
-        thumbImage: acceptedFiles[0],
-      }));
+    onDrop: async (acceptedFiles) => {
+      try {
+        const compressed = await compressImage(acceptedFiles[0]);
+        setFormData((prevData) => ({
+          ...prevData,
+          thumbImage: compressed,
+        }));
+      } catch {
+        setFormData((prevData) => ({
+          ...prevData,
+          thumbImage: acceptedFiles[0],
+        }));
+      }
     },
   });
 

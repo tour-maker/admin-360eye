@@ -8,6 +8,35 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
  
 const API_URL = import.meta.env.VITE_BACKEND_URL;
+
+// Compress/resize an image client-side so uploads stay under CloudFront's 1MB body limit
+const compressImage = (file, maxWidth = 1200, quality = 0.75) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) return reject(new Error("Compression failed"));
+            resolve(new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg" }));
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
  
 const AddBlog = ({ isEditing }) => {
   const { token } = useSelector((state) => state.auth);
@@ -30,8 +59,13 @@ const AddBlog = ({ isEditing }) => {
   const { getRootProps, getInputProps } = useDropzone({
     accept: { "image/*": [] },
     maxFiles: 1,
-    onDrop: (acceptedFiles) => {
-      setFormData((prev) => ({ ...prev, thumbnail: acceptedFiles[0] }));
+    onDrop: async (acceptedFiles) => {
+      try {
+        const compressed = await compressImage(acceptedFiles[0]);
+        setFormData((prev) => ({ ...prev, thumbnail: compressed }));
+      } catch {
+        setFormData((prev) => ({ ...prev, thumbnail: acceptedFiles[0] }));
+      }
     },
   });
  
