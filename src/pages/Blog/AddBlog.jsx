@@ -90,21 +90,16 @@ const AddBlog = ({ isEditing }) => {
  
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-    console.log("DEBUG: submit fired", formData);
     try {
       if (isEditing && id) {
-        console.log("DEBUG: calling updateBlog");
         await updateBlog(id, formData, token);
         toast.success("Blog updated successfully");
       } else {
-        console.log("DEBUG: calling createBlog");
-        const result = await createBlog(formData, token);
-        console.log("DEBUG: createBlog result", result);
+        await createBlog(formData, token);
         toast.success("Blog created successfully");
       }
       navigate("/blog");
     } catch (error) {
-      console.log("DEBUG: caught error", error);
       toast.error(error?.response?.data?.message || "Something went wrong");
     }
   };
