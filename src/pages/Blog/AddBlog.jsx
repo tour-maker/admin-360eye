@@ -80,12 +80,13 @@ const AddBlog = ({ isEditing }) => {
 
   const quillModules = {
   toolbar: [
+    [{ 'header': [2, 3, false] }],
     [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
     ['bold', 'italic', 'underline', 'strike'],
     [{ 'color': [] }, { 'background': [] }],
     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
     [{ 'align': [] }],
-    ['link'],
+    ['blockquote', 'link'],
     ['clean']
   ]
   };
