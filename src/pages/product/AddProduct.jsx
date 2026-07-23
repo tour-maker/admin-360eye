@@ -61,7 +61,7 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
     area: "",
     thumbImage: null,
     googleAnalyticsId: "",
-    bhkType: "",
+    bhkType: [],
     hasVoiceOver: false,
     viewMode: "Day",
   });
@@ -119,7 +119,9 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
             area: productData.area || "",
             thumbImage: productData.thumbImage || null,
             googleAnalyticsId: productData.googleAnalyticsId || "",
-            bhkType: productData.bhkType || "",
+            bhkType: Array.isArray(productData.bhkType)
+              ? productData.bhkType
+              : (productData.bhkType ? [productData.bhkType] : []),
             hasVoiceOver: productData.hasVoiceOver || false,
             viewMode: productData.viewMode || "Day",
           });
@@ -138,7 +140,7 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
             area: "",
             thumbImage: null,
             googleAnalyticsId: "",
-            bhkType: "",
+            bhkType: [],
             hasVoiceOver: false,
             viewMode: "Day",
           });
@@ -313,17 +315,27 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
             <label className="block text-sm font-medium text-gray-700">
               BHK Configuration
             </label>
-            <select
-              name="bhkType"
-              value={formData.bhkType}
-              onChange={handleOnChange}
-              className="mt-1 block w-full px-4 py-2 border border-accent-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            >
-              <option value="">Not specified</option>
-              <option value="2 BHK">2 BHK</option>
-              <option value="3 BHK">3 BHK</option>
-              <option value="5 BHK">5 BHK</option>
-            </select>
+            <div className="mt-1 flex flex-wrap gap-4">
+              {["2 BHK", "3 BHK", "3.5 BHK", "4 BHK", "5 BHK"].map((option) => (
+                <label key={option} className="flex items-center gap-2 text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={formData.bhkType.includes(option)}
+                    onChange={(e) => {
+                      setFormData((prevData) => {
+                        const current = prevData.bhkType || [];
+                        const updated = e.target.checked
+                          ? [...current, option]
+                          : current.filter((v) => v !== option);
+                        return { ...prevData, bhkType: updated };
+                      });
+                    }}
+                    className="h-4 w-4 text-primary-500 border-accent-300 rounded focus:ring-primary-500"
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
           </div>
 
           {/* Day/Night View */}
