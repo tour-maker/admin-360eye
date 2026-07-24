@@ -47,6 +47,7 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
   // Use productToEdit prop if provided (for inline editing), otherwise use location state
   const productData = productToEdit || productFromLocation;
 
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     categoryType: "Virtual Tour", // Set default value here
     propertyType: "",
@@ -313,61 +314,93 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
             />
           </div>
 
-          {/* Configuration (BHK + View Mode + Voice Over) */}
-          <div className="border border-accent-300 rounded-md p-4">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Configuration
+          {/* Tag (BHK + Day/Night + Voice Over) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Tag
             </label>
-            <div className="mb-4">
-              <span className="block text-xs font-medium text-gray-500 mb-1">BHK</span>
-              <div className="flex flex-wrap gap-4">
-                {["2 BHK", "3 BHK", "3.5 BHK", "4 BHK", "5 BHK"].map((option) => (
-                  <label key={option} className="flex items-center gap-2 text-sm text-gray-700">
-                    <input
-                      type="checkbox"
-                      checked={formData.bhkType.includes(option)}
-                      onChange={(e) => {
+            <button
+              type="button"
+              onClick={() => setIsTagModalOpen(true)}
+              className="mt-1 block w-full text-left px-4 py-2 border border-accent-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
+            >
+              {[
+                ...formData.bhkType,
+                ...(formData.viewMode === "Both" ? ["Day", "Night"] : formData.viewMode ? [formData.viewMode] : []),
+                ...(formData.hasVoiceOver ? ["Voice Over"] : []),
+              ].join(", ") || "Select tags"}
+            </button>
+            {isTagModalOpen && (
+              <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setIsTagModalOpen(false)}>
+                <div className="bg-white rounded-md max-w-sm w-full border border-accent-300 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+                  <div className="p-4 border-b border-accent-300 flex justify-between items-center">
+                    <h3 className="text-lg font-medium">Tag</h3>
+                    <button type="button" onClick={() => setIsTagModalOpen(false)} className="text-gray-400 hover:text-gray-700">✕</button>
+                  </div>
+                  <div className="p-2 max-h-96 overflow-y-auto">
+                    {["2 BHK", "3 BHK", "3.5 BHK", "4 BHK", "5 BHK"].map((option) => (
+                      <button
+                        type="button"
+                        key={option}
+                        onClick={() => {
+                          setFormData((prevData) => {
+                            const current = prevData.bhkType || [];
+                            const updated = current.includes(option)
+                              ? current.filter((v) => v !== option)
+                              : [...current, option];
+                            return { ...prevData, bhkType: updated };
+                          });
+                        }}
+                        className={`w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center justify-between ${formData.bhkType.includes(option) ? "text-primary-600 font-medium" : "text-gray-700"}`}
+                      >
+                        <span>{option}</span>
+                        {formData.bhkType.includes(option) && <span>✓</span>}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => {
                         setFormData((prevData) => {
-                          const current = prevData.bhkType || [];
-                          const updated = e.target.checked
-                            ? [...current, option]
-                            : current.filter((v) => v !== option);
-                          return { ...prevData, bhkType: updated };
+                          const hasDay = prevData.viewMode === "Day" || prevData.viewMode === "Both";
+                          const hasNight = prevData.viewMode === "Night" || prevData.viewMode === "Both";
+                          const newHasDay = !hasDay;
+                          const newMode = newHasDay && hasNight ? "Both" : newHasDay ? "Day" : hasNight ? "Night" : "Day";
+                          return { ...prevData, viewMode: newMode };
                         });
                       }}
-                      className="h-4 w-4 text-primary-500 border-accent-300 rounded focus:ring-primary-500"
-                    />
-                    {option}
-                  </label>
-                ))}
+                      className={`w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center justify-between ${(formData.viewMode === "Day" || formData.viewMode === "Both") ? "text-primary-600 font-medium" : "text-gray-700"}`}
+                    >
+                      <span>Day</span>
+                      {(formData.viewMode === "Day" || formData.viewMode === "Both") && <span>✓</span>}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormData((prevData) => {
+                          const hasDay = prevData.viewMode === "Day" || prevData.viewMode === "Both";
+                          const hasNight = prevData.viewMode === "Night" || prevData.viewMode === "Both";
+                          const newHasNight = !hasNight;
+                          const newMode = hasDay && newHasNight ? "Both" : hasDay ? "Day" : newHasNight ? "Night" : "Day";
+                          return { ...prevData, viewMode: newMode };
+                        });
+                      }}
+                      className={`w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center justify-between ${(formData.viewMode === "Night" || formData.viewMode === "Both") ? "text-primary-600 font-medium" : "text-gray-700"}`}
+                    >
+                      <span>Night</span>
+                      {(formData.viewMode === "Night" || formData.viewMode === "Both") && <span>✓</span>}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormData((prevData) => ({ ...prevData, hasVoiceOver: !prevData.hasVoiceOver }))}
+                      className={`w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center justify-between ${formData.hasVoiceOver ? "text-primary-600 font-medium" : "text-gray-700"}`}
+                    >
+                      <span>Voice Over</span>
+                      {formData.hasVoiceOver && <span>✓</span>}
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="mb-4">
-              <span className="block text-xs font-medium text-gray-500 mb-1">View Mode</span>
-              <select
-                name="viewMode"
-                value={formData.viewMode}
-                onChange={handleOnChange}
-                className="block w-full px-4 py-2 border border-accent-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              >
-                <option value="Day">Day</option>
-                <option value="Night">Night</option>
-                <option value="Both">Both</option>
-              </select>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="hasVoiceOver"
-                name="hasVoiceOver"
-                checked={formData.hasVoiceOver}
-                onChange={handleOnChange}
-                className="h-4 w-4 rounded border-accent-300 text-primary-600 focus:ring-primary-500"
-              />
-              <label htmlFor="hasVoiceOver" className="text-sm font-medium text-gray-700">
-                Has Voice Over
-              </label>
-            </div>
+            )}
           </div>
           {/* Plot Status */}
           <div>
