@@ -17,6 +17,7 @@ import AddProduct from "./src/pages/product/AddProduct";
 import AddCommercial from "./src/pages/product/Commercial";
 import DashboardLayout from "./src/pages/DashboardLayout";
 import ProperyType from "./src/pages/property/ProperyTypePage";
+import FiltersPage from "./src/pages/filters/FiltersPage";
 import ProtectedRoute from "./src/protectRoute/ProtectedRoute";
 import CategoryPage from "./src/pages/category/CategoryPage";
 import PropertyStatusPage from "./src/pages/property/PropertyStatusPage";
@@ -138,6 +139,10 @@ export const router = createHashRouter([
       {
         path: "/property/propertyStatus",
         element: <PropertyStatusPage />
+      },
+      {
+        path: "filters",
+        element: <FiltersPage />
       },
       {
         path: "blog",
