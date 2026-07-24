@@ -333,7 +333,7 @@ const AddCommercial = ({ isEditing }) => {
           </button>
           <button
             type="button"
-            onClick={() => navigate("/")} // Navigate back to the product table
+            onClick={() => navigate("/managecommercial")} // Navigate back to commercial table
             className="w-full bg-info-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition duration-300"
           >
             Cancel

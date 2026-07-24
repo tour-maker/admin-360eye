@@ -15,6 +15,9 @@ export const fetchSliders = async (token, search = "") => {
       params: {
         search,
       },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!response.data.success) {
