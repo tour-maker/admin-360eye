@@ -62,6 +62,7 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
     thumbImage: null,
     googleAnalyticsId: "",
     bhkType: [],
+    plotStatus: "",
     hasVoiceOver: false,
     viewMode: "Day",
   });
@@ -122,6 +123,7 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
             bhkType: Array.isArray(productData.bhkType)
               ? productData.bhkType
               : (productData.bhkType ? [productData.bhkType] : []),
+            plotStatus: productData.plotStatus || "",
             hasVoiceOver: productData.hasVoiceOver || false,
             viewMode: productData.viewMode || "Day",
           });
@@ -141,6 +143,7 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
             thumbImage: null,
             googleAnalyticsId: "",
             bhkType: [],
+            plotStatus: "",
             hasVoiceOver: false,
             viewMode: "Day",
           });
@@ -336,6 +339,24 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
                 </label>
               ))}
             </div>
+          </div>
+
+          {/* Plot Status */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Plot Status
+            </label>
+            <select
+              name="plotStatus"
+              value={formData.plotStatus}
+              onChange={handleOnChange}
+              className="mt-1 block w-full px-4 py-2 border border-accent-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="">Not specified</option>
+              <option value="Available">Available</option>
+              <option value="Reserved">Reserved</option>
+              <option value="Sold">Sold</option>
+            </select>
           </div>
 
           {/* Day/Night View */}
