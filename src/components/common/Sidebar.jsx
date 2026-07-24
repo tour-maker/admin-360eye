@@ -59,8 +59,12 @@ const Sidebar = () => {
         { title: "Property Status", path: "/property/propertyStatus" },
         { title: "Property Type", path: "/property/propertyType" },
         { title: "Add Area", path: "/area" },
-        { title: "Filters", path: "/filters" },
       ]
+    },
+    {
+      title: "Filters",
+      icon: <FiSettings className="mr-3 text-lg" />,
+      path: "/filters",
     },
     {
       title: "Commercial Films",
