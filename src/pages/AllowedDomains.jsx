@@ -56,6 +56,7 @@ const AllowedDomains = () => {
   const [submitting, setSubmitting] = useState(false);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [products, setProducts] = useState([]);
+  const [tourSearch, setTourSearch] = useState("");
 
   const isEditing = useMemo(() => Boolean(formState.id), [formState.id]);
 
@@ -445,8 +446,17 @@ const AllowedDomains = () => {
                 <p className="text-xs text-secondary-500 mb-2">
                   Leave empty to allow this domain to embed ANY tour. Select specific tours to restrict embedding to only those.
                 </p>
+                <input
+                  type="text"
+                  value={tourSearch}
+                  onChange={(e) => setTourSearch(e.target.value)}
+                  placeholder="Search tours..."
+                  className="mb-2 w-full rounded-lg border border-accent-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200"
+                />
                 <div className="max-h-48 overflow-y-auto border border-accent-300 rounded-lg p-2 bg-white/70 space-y-1">
-                  {products.map((p) => (
+                  {products
+                    .filter((p) => (p.tourName || "").toLowerCase().includes(tourSearch.toLowerCase()))
+                    .map((p) => (
                     <label key={p._id} className="flex items-center gap-2 text-sm text-secondary-700 px-1 py-1 hover:bg-secondary-50 rounded">
                       <input
                         type="checkbox"
@@ -465,7 +475,7 @@ const AllowedDomains = () => {
                       {p.tourName}
                     </label>
                   ))}
-                  {products.length === 0 && (
+                  {products.filter((p) => (p.tourName || "").toLowerCase().includes(tourSearch.toLowerCase())).length === 0 && (
                     <p className="text-xs text-secondary-400 px-1 py-1">No tours found</p>
                   )}
                 </div>
