@@ -18,6 +18,7 @@ import AddCommercial from "./src/pages/product/Commercial";
 import DashboardLayout from "./src/pages/DashboardLayout";
 import ProperyType from "./src/pages/property/ProperyTypePage";
 import FiltersPage from "./src/pages/filters/FiltersPage";
+import CareersPage from "./src/pages/careers/CareersPage";
 import ProtectedRoute from "./src/protectRoute/ProtectedRoute";
 import CategoryPage from "./src/pages/category/CategoryPage";
 import PropertyStatusPage from "./src/pages/property/PropertyStatusPage";
@@ -143,6 +144,10 @@ export const router = createHashRouter([
       {
         path: "filters",
         element: <FiltersPage />
+      },
+      {
+        path: "careers",
+        element: <CareersPage />
       },
       {
         path: "blog",
