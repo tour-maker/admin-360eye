@@ -87,3 +87,30 @@ export const updateCareerSettings = async (data, token) => {
     throw error;
   }
 };
+
+export const fetchApplications = async (token) => {
+  try {
+    const response = await api.get("/applications", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.data.success) throw new Error(response.data.message);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching applications:", error);
+    throw error;
+  }
+};
+
+export const deleteApplication = async (id, token) => {
+  try {
+    const response = await api.delete(`/applications/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.data.success) throw new Error(response.data.message);
+    toast.success("Application deleted successfully");
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Error deleting application");
+    throw error;
+  }
+};
