@@ -9,6 +9,7 @@ import {
   updateAllowedDomain,
   updateAllowedDomainStatus,
 } from "../services/allowedDomainService.js";
+import { fetchProducts } from "../services/productService.js";
 import logo from "../assets/images/360eye_logo 4.png";
 
 const DEFAULT_FORM_STATE = {
@@ -22,6 +23,7 @@ const DEFAULT_FORM_STATE = {
   remindBeforeDays: 15,
   notes: "",
   isActive: true,
+  allowedTourIds: [],
 };
 
 const toOwnerEmailsInput = (emails) =>
@@ -53,6 +55,7 @@ const AllowedDomains = () => {
   const [securityConfig, setSecurityConfig] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [previewLoading, setPreviewLoading] = useState(false);
+  const [products, setProducts] = useState([]);
 
   const isEditing = useMemo(() => Boolean(formState.id), [formState.id]);
 
@@ -77,6 +80,11 @@ const AllowedDomains = () => {
 
   useEffect(() => {
     loadDomains();
+    if (token) {
+      fetchProducts(token, { limit: 1000 })
+        .then((res) => setProducts(res?.products || []))
+        .catch(() => setProducts([]));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
@@ -108,6 +116,7 @@ const AllowedDomains = () => {
         typeof domain.remindBeforeDays === "number" ? domain.remindBeforeDays : "",
       notes: domain.notes || "",
       isActive: domain.isActive !== false,
+      allowedTourIds: Array.isArray(domain.allowedTourIds) ? domain.allowedTourIds : [],
     });
   };
 
@@ -126,6 +135,7 @@ const AllowedDomains = () => {
         formState.remindBeforeDays === "" ? undefined : Number(formState.remindBeforeDays),
       notes: formState.notes,
       isActive: formState.isActive,
+      allowedTourIds: formState.allowedTourIds || [],
     };
 
     setSubmitting(true);
@@ -427,6 +437,38 @@ const AllowedDomains = () => {
                   className="mt-1 w-full rounded-lg border border-accent-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200"
                   placeholder="Internal notes (optional)"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-secondary-700 mb-1">
+                  Restrict to specific tours (optional)
+                </label>
+                <p className="text-xs text-secondary-500 mb-2">
+                  Leave empty to allow this domain to embed ANY tour. Select specific tours to restrict embedding to only those.
+                </p>
+                <div className="max-h-48 overflow-y-auto border border-accent-300 rounded-lg p-2 bg-white/70 space-y-1">
+                  {products.map((p) => (
+                    <label key={p._id} className="flex items-center gap-2 text-sm text-secondary-700 px-1 py-1 hover:bg-secondary-50 rounded">
+                      <input
+                        type="checkbox"
+                        checked={(formState.allowedTourIds || []).includes(p._id)}
+                        onChange={(e) => {
+                          setFormState((prev) => {
+                            const current = prev.allowedTourIds || [];
+                            const updated = e.target.checked
+                              ? [...current, p._id]
+                              : current.filter((id) => id !== p._id);
+                            return { ...prev, allowedTourIds: updated };
+                          });
+                        }}
+                        className="h-4 w-4 rounded border-secondary-300 text-primary-600 focus:ring-primary-500"
+                      />
+                      {p.tourName}
+                    </label>
+                  ))}
+                  {products.length === 0 && (
+                    <p className="text-xs text-secondary-400 px-1 py-1">No tours found</p>
+                  )}
+                </div>
               </div>
               <div className="flex items-center gap-2 rounded-lg bg-white/70 px-3 py-2">
                 <input
