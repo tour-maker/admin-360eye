@@ -23,6 +23,7 @@ const CareersPage = () => {
   const [roles, setRoles] = useState([]);
   const [roleTitle, setRoleTitle] = useState("");
   const [roleDescription, setRoleDescription] = useState("");
+  const [roleImage, setRoleImage] = useState("");
   const [roleIsOpen, setRoleIsOpen] = useState(true);
   const [roleOrder, setRoleOrder] = useState(0);
   const [roleQuestions, setRoleQuestions] = useState([]);
@@ -80,6 +81,7 @@ const CareersPage = () => {
   const resetRoleForm = () => {
     setRoleTitle("");
     setRoleDescription("");
+    setRoleImage("");
     setRoleIsOpen(true);
     setRoleOrder(0);
     setRoleQuestions([]);
@@ -91,6 +93,7 @@ const CareersPage = () => {
     const payload = {
       title: roleTitle,
       description: roleDescription,
+      image: roleImage,
       isOpen: roleIsOpen,
       roleOrder,
       questions: roleQuestions,
@@ -112,6 +115,7 @@ const CareersPage = () => {
     setEditingRoleId(role._id);
     setRoleTitle(role.title);
     setRoleDescription(role.description || "");
+    setRoleImage(role.image || "");
     setRoleIsOpen(role.isOpen);
     setRoleOrder(role.roleOrder || 0);
     setRoleQuestions(role.questions || []);
@@ -271,6 +275,16 @@ const CareersPage = () => {
               value={roleDescription}
               onChange={(e) => setRoleDescription(e.target.value)}
               rows={2}
+              className="mt-1 block w-full px-4 py-2 border border-accent-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Card Image URL</label>
+            <input
+              type="text"
+              value={roleImage}
+              onChange={(e) => setRoleImage(e.target.value)}
+              placeholder="https://..."
               className="mt-1 block w-full px-4 py-2 border border-accent-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
           </div>
