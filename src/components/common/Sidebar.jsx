@@ -67,6 +67,11 @@ const Sidebar = () => {
       path: "/careers",
     },
     {
+      title: "Partners",
+      icon: <FiUsers className="mr-3 text-lg" />,
+      path: "/partners",
+    },
+    {
       title: "Filters",
       icon: <FiSettings className="mr-3 text-lg" />,
       path: "/filters",
