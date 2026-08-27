@@ -61,11 +61,11 @@ const Sidebar = () => {
         { title: "Add Area", path: "/area" },
       ]
     },
-    {
+    /* {
       title: "Careers",
       icon: <FiUsers className="mr-3 text-lg" />,
       path: "/careers",
-    },
+    }, */
     {
       title: "Partners",
       icon: <FiUsers className="mr-3 text-lg" />,
@@ -105,14 +105,14 @@ const Sidebar = () => {
         { title: "Client List", path: "/slider" }
       ]
     },
-    {
+    /* {
       title: "Blog",
       icon: <FiHelpCircle className="mr-3 text-lg" />,
       subItems: [
         { title: "Add Blog", path: "/blog/add" },
         { title: "Manage Blog", path: "/blog" },
       ]
-    },
+    }, */
     {
       title: "Client Access",
       icon: <FiLock className="mr-3 text-lg" />,

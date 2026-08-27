@@ -18,7 +18,7 @@ import AddCommercial from "./src/pages/product/Commercial";
 import DashboardLayout from "./src/pages/DashboardLayout";
 import ProperyType from "./src/pages/property/ProperyTypePage";
 import FiltersPage from "./src/pages/filters/FiltersPage";
-import CareersPage from "./src/pages/careers/CareersPage";
+// import CareersPage from "./src/pages/careers/CareersPage";
 import PartnersPage from "./src/pages/partners/PartnersPage";
 import ProtectedRoute from "./src/protectRoute/ProtectedRoute";
 import CategoryPage from "./src/pages/category/CategoryPage";
@@ -28,8 +28,8 @@ import CommerceTable from "./src/components/commercial/CommerceTable";
 import Product360Table from "./src/components/products/Product360Table";
 import AriaPage from "./src/pages/AreaPage";
 import UploadZIP from "./src/pages/album/UploadZIP";
-import BlogTable from "./src/pages/Blog/BlogTable";
-import AddBlog from "./src/pages/Blog/AddBlog";
+// import BlogTable from "./src/pages/Blog/BlogTable";
+// import AddBlog from "./src/pages/Blog/AddBlog";
 import ClientAccessTable from "./src/pages/ClientAccess/ClientAccessTable";
 import AddClientAccess from "./src/pages/ClientAccess/AddClientAccess";
 
@@ -146,15 +146,15 @@ export const router = createHashRouter([
         path: "filters",
         element: <FiltersPage />
       },
-      {
+      /* {
         path: "careers",
         element: <CareersPage />
-      },
+      }, */
       {
         path: "partners",
         element: <PartnersPage />
       },
-      {
+      /* {
         path: "blog",
         element: <BlogTable />
       },
@@ -165,7 +165,7 @@ export const router = createHashRouter([
       {
         path: "blog/edit/:id",
         element: <AddBlog isEditing />
-      },
+      }, */
       {
         path: "client-access",
         element: <ClientAccessTable />
