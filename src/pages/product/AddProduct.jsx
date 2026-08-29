@@ -397,20 +397,14 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
                       <span>Voice Over</span>
                       {formData.hasVoiceOver && <span>✓</span>}
                     </button>
-                  </div>
-                  <div className="p-3 border-t border-accent-300">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Plot Status</label>
-                    <select
-                      name="plotStatus"
-                      value={formData.plotStatus}
-                      onChange={handleOnChange}
-                      className="block w-full px-3 py-2 border border-accent-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    <button
+                      type="button"
+                      onClick={() => setFormData((prevData) => ({ ...prevData, plotStatus: prevData.plotStatus ? "" : "Yes" }))}
+                      className={`w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center justify-between ${formData.plotStatus ? "text-primary-600 font-medium" : "text-gray-700"}`}
                     >
-                      <option value="">Not specified</option>
-                      <option value="Available">Available</option>
-                      <option value="Reserved">Reserved</option>
-                      <option value="Sold">Sold</option>
-                    </select>
+                      <span>Plot Status</span>
+                      {formData.plotStatus && <span>✓</span>}
+                    </button>
                   </div>
                 </div>
               </div>
