@@ -61,11 +61,11 @@ const Sidebar = () => {
         { title: "Add Area", path: "/area" },
       ]
     },
-    /* {
+    {
       title: "Careers",
       icon: <FiUsers className="mr-3 text-lg" />,
       path: "/careers",
-    }, */
+    },
     {
       title: "Partners",
       icon: <FiUsers className="mr-3 text-lg" />,
