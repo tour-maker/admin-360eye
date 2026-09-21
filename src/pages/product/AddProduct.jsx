@@ -65,7 +65,7 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
     bhkType: [],
     plotStatus: "",
     hasVoiceOver: false,
-    viewMode: "Day",
+    viewMode: "",
   });
 
   const [categories, setCategories] = useState([]);
@@ -126,7 +126,7 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
               : (productData.bhkType ? [productData.bhkType] : []),
             plotStatus: productData.plotStatus || "",
             hasVoiceOver: productData.hasVoiceOver || false,
-            viewMode: productData.viewMode || "Day",
+            viewMode: productData.viewMode || "",
           });
         } else {
           setFormData({
@@ -146,7 +146,7 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
             bhkType: [],
             plotStatus: "",
             hasVoiceOver: false,
-            viewMode: "Day",
+            viewMode: "",
           });
         }
       } catch (error) {
@@ -338,7 +338,7 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
                     <button type="button" onClick={() => setIsTagModalOpen(false)} className="text-gray-400 hover:text-gray-700">✕</button>
                   </div>
                   <div className="p-2 max-h-96 overflow-y-auto">
-                    {["2 BHK", "3 BHK", "3.5 BHK", "4 BHK", "5 BHK"].map((option) => (
+                    {["2 BHK", "3 BHK", "3.5 BHK", "4 BHK", "5 BHK", "Penthouse"].map((option) => (
                       <button
                         type="button"
                         key={option}
