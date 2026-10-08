@@ -7,6 +7,7 @@ import { fetchCategories } from "../../services/categoryService";
 import { fetchPropertyTypes } from "../../services/propertyTypeService";
 import { fetchPropertyStatuses } from "../../services/propertyStatusService";
 import { fetchAreas } from "../../services/areaService"; // Import the area service
+import { fetchFilters } from "../../services/filterService";
 import toast from "react-hot-toast";
 
 // Compress/resize an image client-side so uploads stay under CloudFront's 1MB body limit
@@ -66,12 +67,15 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
     plotStatus: "",
     hasVoiceOver: false,
     viewMode: "",
+    filterTags: {},
   });
 
   const [categories, setCategories] = useState([]);
   const [propertyTypes, setPropertyTypes] = useState([]);
   const [propertyStatuses, setPropertyStatuses] = useState([]);
   const [areas, setAreas] = useState([]); // State for areas
+  const [bhkOptions, setBhkOptions] = useState(["2 BHK", "3 BHK", "3.5 BHK", "4 BHK", "5 BHK", "Penthouse"]);
+  const [allFilterGroups, setAllFilterGroups] = useState([]);
   const navigate = useNavigate();
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -106,6 +110,29 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
         setPropertyStatuses(propertyStatusesData.propertyStatuses);
         setAreas(areasData);
 
+        try {
+          const filtersData = await fetchFilters(token);
+          const featuresFilter = (filtersData.filters || []).find(
+            (f) => f.name && f.name.trim().toLowerCase() === "unit type"
+          );
+          if (featuresFilter && Array.isArray(featuresFilter.options)) {
+            const reserved = ["day", "night", "voice over", "plot status"];
+            const dynamicBhkOptions = featuresFilter.options.filter(
+              (opt) => !reserved.includes(String(opt).trim().toLowerCase())
+            );
+            if (dynamicBhkOptions.length > 0) {
+              setBhkOptions(dynamicBhkOptions);
+            }
+          }
+          const excludedGroupNames = ["unit type", "property type", "area", "3d/photo", "property status"];
+          const otherGroups = (filtersData.filters || []).filter(
+            (f) => f.name && !excludedGroupNames.includes(f.name.trim().toLowerCase())
+          );
+          setAllFilterGroups(otherGroups);
+        } catch (err) {
+          console.error("Error fetching dynamic BHK options, using fallback:", err);
+        }
+
         if (isEditing && productData) {
           setFormData({
             categoryType: "Virtual Tour",
@@ -127,6 +154,7 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
             plotStatus: productData.plotStatus || "",
             hasVoiceOver: productData.hasVoiceOver || false,
             viewMode: productData.viewMode || "",
+            filterTags: productData.filterTags || {},
           });
         } else {
           setFormData({
@@ -147,6 +175,7 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
             plotStatus: "",
             hasVoiceOver: false,
             viewMode: "",
+            filterTags: {},
           });
         }
       } catch (error) {
@@ -314,10 +343,10 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
             />
           </div>
 
-          {/* Tag (BHK + Day/Night + Voice Over) */}
+          {/* Filters (Unit Type + dynamic groups e.g. Features) */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tag
+              Filters
             </label>
             <button
               type="button"
@@ -326,19 +355,18 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
             >
               {[
                 ...formData.bhkType,
-                ...(formData.viewMode === "Both" ? ["Day", "Night"] : formData.viewMode ? [formData.viewMode] : []),
-                ...(formData.hasVoiceOver ? ["Voice Over"] : []),
+                ...Object.values(formData.filterTags || {}).flat(),
               ].join(", ") || "Select tags"}
             </button>
             {isTagModalOpen && (
               <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setIsTagModalOpen(false)}>
                 <div className="bg-white rounded-md max-w-sm w-full border border-accent-300 shadow-2xl" onClick={(e) => e.stopPropagation()}>
                   <div className="p-4 border-b border-accent-300 flex justify-between items-center">
-                    <h3 className="text-lg font-medium">Tag</h3>
+                    <h3 className="text-lg font-medium">Filters</h3>
                     <button type="button" onClick={() => setIsTagModalOpen(false)} className="text-gray-400 hover:text-gray-700">✕</button>
                   </div>
                   <div className="p-2 max-h-96 overflow-y-auto">
-                    {["2 BHK", "3 BHK", "3.5 BHK", "4 BHK", "5 BHK", "Penthouse"].map((option) => (
+                    {bhkOptions.map((option) => (
                       <button
                         type="button"
                         key={option}
@@ -357,54 +385,33 @@ const AddProduct = ({ isEditing, productToEdit, onCancel, onUpdate }) => {
                         {formData.bhkType.includes(option) && <span>✓</span>}
                       </button>
                     ))}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFormData((prevData) => {
-                          const hasDay = prevData.viewMode === "Day" || prevData.viewMode === "Both";
-                          const hasNight = prevData.viewMode === "Night" || prevData.viewMode === "Both";
-                          const newHasDay = !hasDay;
-                          const newMode = newHasDay && hasNight ? "Both" : newHasDay ? "Day" : hasNight ? "Night" : "Day";
-                          return { ...prevData, viewMode: newMode };
-                        });
-                      }}
-                      className={`w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center justify-between ${(formData.viewMode === "Day" || formData.viewMode === "Both") ? "text-primary-600 font-medium" : "text-gray-700"}`}
-                    >
-                      <span>Day</span>
-                      {(formData.viewMode === "Day" || formData.viewMode === "Both") && <span>✓</span>}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFormData((prevData) => {
-                          const hasDay = prevData.viewMode === "Day" || prevData.viewMode === "Both";
-                          const hasNight = prevData.viewMode === "Night" || prevData.viewMode === "Both";
-                          const newHasNight = !hasNight;
-                          const newMode = hasDay && newHasNight ? "Both" : hasDay ? "Day" : newHasNight ? "Night" : "Day";
-                          return { ...prevData, viewMode: newMode };
-                        });
-                      }}
-                      className={`w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center justify-between ${(formData.viewMode === "Night" || formData.viewMode === "Both") ? "text-primary-600 font-medium" : "text-gray-700"}`}
-                    >
-                      <span>Night</span>
-                      {(formData.viewMode === "Night" || formData.viewMode === "Both") && <span>✓</span>}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFormData((prevData) => ({ ...prevData, hasVoiceOver: !prevData.hasVoiceOver }))}
-                      className={`w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center justify-between ${formData.hasVoiceOver ? "text-primary-600 font-medium" : "text-gray-700"}`}
-                    >
-                      <span>Voice Over</span>
-                      {formData.hasVoiceOver && <span>✓</span>}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFormData((prevData) => ({ ...prevData, plotStatus: prevData.plotStatus ? "" : "Yes" }))}
-                      className={`w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center justify-between ${formData.plotStatus ? "text-primary-600 font-medium" : "text-gray-700"}`}
-                    >
-                      <span>Plot Status</span>
-                      {formData.plotStatus && <span>✓</span>}
-                    </button>
+                    {allFilterGroups.map((group) => (
+                      <div key={group._id || group.name}>
+                        <div className="px-4 pt-3 pb-1 text-xs font-semibold text-gray-400 uppercase">{group.name}</div>
+                        {(group.options || []).map((option) => (
+                          <button
+                            type="button"
+                            key={option}
+                            onClick={() => {
+                              setFormData((prevData) => {
+                                const current = (prevData.filterTags && prevData.filterTags[group.name]) || [];
+                                const updated = current.includes(option)
+                                  ? current.filter((v) => v !== option)
+                                  : [...current, option];
+                                return {
+                                  ...prevData,
+                                  filterTags: { ...prevData.filterTags, [group.name]: updated },
+                                };
+                              });
+                            }}
+                            className={`w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center justify-between ${((formData.filterTags && formData.filterTags[group.name]) || []).includes(option) ? "text-primary-600 font-medium" : "text-gray-700"}`}
+                          >
+                            <span>{option}</span>
+                            {((formData.filterTags && formData.filterTags[group.name]) || []).includes(option) && <span>✓</span>}
+                          </button>
+                        ))}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>

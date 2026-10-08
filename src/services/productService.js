@@ -371,3 +371,14 @@ export const updateProductOrder = async (id, tourOrder, token) => {
     throw error;
   }
 };
+
+// Show/hide a tour on the public website (hidden tours still open by direct link).
+export const setProductStatus = async (id, productStatus, token) => {
+  const response = await api.patch(`/${id}/status`, { productStatus }, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.data.success) {
+    throw new Error(response.data.message || 'Failed to change visibility');
+  }
+  return response.data;
+};

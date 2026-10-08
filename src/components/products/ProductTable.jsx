@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { IoSearchOutline } from "react-icons/io5";
 import { MdOutlineAnalytics } from "react-icons/md";
-import { HiOutlinePencil, HiOutlineTrash, HiOutlineKey } from "react-icons/hi";
+import { HiOutlinePencil, HiOutlineTrash, HiOutlineKey, HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
 import { IoArrowUp, IoArrowDown } from "react-icons/io5";
 import ConfirmationModal from "../common/ConfirmationModal";
 import { 
@@ -12,6 +12,7 @@ import {
   bulkUpdateTourURLs,
   updateProductPassword,
   updateProductOrder,
+  setProductStatus,
 } from "../../services/productService";
 import Pagination from "../Pagination";
 import AddProduct from "../../pages/product/AddProduct";
@@ -22,6 +23,30 @@ import toast from "react-hot-toast";
 // Separate component for the table row
 const ProductRow = ({ product, onEdit, onDelete, onSetPassword, onViewAnalytics, onMoveUp, onMoveDown, index, totalItems, onDragStart, onDragEnd, onDragOver, onDrop, isDragging }) => {
   const hasAnalyticsId = Boolean(product.googleAnalyticsId?.trim());
+  const { token } = useSelector((state) => state.auth);
+  const [status, setStatus] = useState(product.productStatus);
+  const [savingStatus, setSavingStatus] = useState(false);
+  useEffect(() => {
+    setStatus(product.productStatus);
+  }, [product.productStatus]);
+
+  const handleToggleStatus = async () => {
+    const next = status === "Yes" ? "No" : "Yes";
+    setSavingStatus(true);
+    try {
+      await setProductStatus(product._id, next, token);
+      setStatus(next);
+      toast.success(
+        next === "Yes"
+          ? "Tour is now visible on the website"
+          : "Tour hidden from the website (its direct link still works)"
+      );
+    } catch (e) {
+      toast.error(e.response?.data?.message || "Could not change visibility");
+    } finally {
+      setSavingStatus(false);
+    }
+  };
 
   return (
   <tr 
@@ -76,12 +101,12 @@ const ProductRow = ({ product, onEdit, onDelete, onSetPassword, onViewAnalytics,
     <td className="p-3">
       <span
         className={`px-2 py-1 rounded-full text-sm ${
-          product.productStatus === "Yes"
+          status === "Yes"
             ? "bg-green-100 text-green-700"
             : "bg-red-100 text-red-700"
         }`}
       >
-        {product.productStatus}
+        {status === "Yes" ? "Visible" : "Hidden"}
       </span>
     </td>
     <td className="p-3">
@@ -97,6 +122,15 @@ const ProductRow = ({ product, onEdit, onDelete, onSetPassword, onViewAnalytics,
     </td>
     <td className="p-3">
       <div className="flex items-center gap-1">
+        <button
+          onClick={handleToggleStatus}
+          disabled={savingStatus}
+          className="p-2 rounded transition duration-300 hover:opacity-80"
+          style={{ backgroundColor: "#111111", color: "#ffffff" }}
+          title={status === "Yes" ? "Visible on website - click to hide" : "Hidden from website - click to show"}
+        >
+          {status === "Yes" ? <HiOutlineEye size={16} /> : <HiOutlineEyeOff size={16} />}
+        </button>
         <button
           onClick={() => onEdit(product)}
           className="p-2 bg-accent-400 text-white rounded hover:bg-accent-600 transition duration-300"
